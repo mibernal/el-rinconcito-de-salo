@@ -1,0 +1,7 @@
+# Configuración mínima para la CLI de Supabase (`supabase link`, `supabase db push`,
+# `supabase functions deploy publicar`).
+project_id = "el-rinconcito-de-salo"
+
+[functions.publicar]
+# La función valida el usuario con su token de sesión.
+verify_jwt = true

@@ -14,6 +14,7 @@ import {
   vaciar,
 } from '../../lib/cart';
 import { formatoPrecio, url } from '../../lib/utils';
+import { nuevoCodigoPedido, registrarPedido } from '../../lib/pedidos';
 import { enlaceWhatsApp, mensajePedido } from '../../lib/whatsapp';
 import { Icono } from './Icono';
 
@@ -27,6 +28,7 @@ export default function Bolsita() {
   const total = useStore($total);
   const cliente = useStore($cliente);
   const [enviado, setEnviado] = useState(false);
+  const [codigo, setCodigo] = useState('');
   const cerrarRef = useRef<HTMLButtonElement>(null);
   const focoPrevio = useRef<HTMLElement | null>(null);
 
@@ -34,6 +36,7 @@ export default function Bolsita() {
   useEffect(() => {
     const raiz = document.documentElement;
     if (abierta) {
+      setCodigo(nuevoCodigoPedido());
       focoPrevio.current = document.activeElement as HTMLElement | null;
       raiz.style.overflow = 'hidden';
       requestAnimationFrame(() => cerrarRef.current?.focus());
@@ -46,7 +49,7 @@ export default function Bolsita() {
     setEnviado(false);
   }, [abierta]);
 
-  const enlace = enlaceWhatsApp(mensajePedido(items, cliente));
+  const enlace = enlaceWhatsApp(mensajePedido(items, cliente, codigo));
 
   return (
     <>
@@ -182,7 +185,11 @@ export default function Bolsita() {
                 href={enlace}
                 target="_blank"
                 rel="noopener"
-                onClick={() => setEnviado(true)}
+                onClick={() => {
+                  registrarPedido(codigo, items, cliente);
+                  setEnviado(true);
+                  setCodigo(nuevoCodigoPedido()); // si vuelve a enviar, es otro pedido
+                }}
                 class="btn btn-fucsia w-full text-lg"
               >
                 <Icono nombre="chat" size={22} />

@@ -1,24 +1,14 @@
 import { defineCollection } from 'astro:content';
-import { file } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { parse } from 'yaml';
+import { cargarProductos } from './lib/cargar-productos';
 
-export const CATEGORIAS = {
-  mascarillas: 'Mascarillas',
-  'cuidado-facial': 'Cuidado facial',
-  labios: 'Labios',
-  maquillaje: 'Maquillaje',
-  accesorios: 'Accesorios',
-} as const;
+import { CATEGORIAS, type Categoria } from './lib/categorias';
 
-export type Categoria = keyof typeof CATEGORIAS;
+export { CATEGORIAS, type Categoria };
 
 const productos = defineCollection({
-  // "orden" guarda la posición en el archivo para mostrar los productos en ese mismo orden
-  loader: file('src/data/productos.yaml', {
-    parser: (texto) =>
-      (parse(texto) as Record<string, unknown>[]).map((p, orden) => ({ ...p, orden })),
-  }),
+  // Supabase si está configurado; si no, src/data/productos.yaml (ver src/lib/cargar-productos.ts)
+  loader: cargarProductos(),
   schema: z.object({
     orden: z.number(),
     nombre: z.string().min(2),

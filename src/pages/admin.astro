@@ -1,0 +1,30 @@
+---
+import '@fontsource-variable/fredoka';
+import '@fontsource/pacifico';
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import Admin from '../components/admin/Admin.tsx';
+import { url } from '../lib/utils';
+---
+
+<!doctype html>
+<html lang="es-CO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Panel | El Rinconcito de Salo</title>
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+  </head>
+  <body class="min-h-dvh">
+    <header class="border-b-2 border-dashed border-pincel bg-nube/90">
+      <div class="mx-auto flex h-18 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <a href={url()} class="text-xl sm:text-2xl"><Logo /></a>
+        <span class="rounded-full bg-tinta px-3 py-1 text-sm font-semibold text-white">Panel</span>
+      </div>
+    </header>
+    <main class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <Admin client:only="preact" />
+    </main>
+  </body>
+</html>

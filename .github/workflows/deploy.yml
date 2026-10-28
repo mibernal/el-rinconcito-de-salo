@@ -3,7 +3,13 @@ name: Publicar en GitHub Pages
 on:
   push:
     branches: [main]
+  # Botón "Publicar cambios" del panel /admin (vía la función "publicar" de Supabase)
+  repository_dispatch:
+    types: [publicar]
   workflow_dispatch:
+  # Diario 6:17 a. m. Colombia: refresca stock/precios y mantiene activo Supabase
+  schedule:
+    - cron: '17 11 * * *'
 
 permissions:
   contents: read
@@ -37,6 +43,9 @@ jobs:
           # Detecta solo si el sitio vive en usuario.github.io/repo o en un dominio propio
           SITE_URL: ${{ steps.pages.outputs.origin }}
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # Base de datos (opcional). Sin estas variables se usa src/data/productos.yaml
+          PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_KEY: ${{ vars.PUBLIC_SUPABASE_KEY }}
 
       - uses: actions/upload-pages-artifact@v5
         with:

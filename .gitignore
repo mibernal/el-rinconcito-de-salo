@@ -14,3 +14,6 @@ npm-debug.log*
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
+
+# ejemplo de variables (sí se sube)
+!.env.example

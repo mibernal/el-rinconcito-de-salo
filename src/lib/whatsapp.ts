@@ -7,7 +7,7 @@ export function enlaceWhatsApp(mensaje: string): string {
 }
 
 /** Mensaje de pedido completo a partir de la bolsita. */
-export function mensajePedido(items: ItemBolsita[], cliente: DatosCliente): string {
+export function mensajePedido(items: ItemBolsita[], cliente: DatosCliente, codigo?: string): string {
   const total = items.reduce((n, i) => n + i.precio * i.cantidad, 0);
   const lineas = items.map(
     (i) => `• ${i.cantidad} × ${i.nombre} — ${formatoPrecio(i.precio * i.cantidad)}`,
@@ -15,6 +15,7 @@ export function mensajePedido(items: ItemBolsita[], cliente: DatosCliente): stri
 
   const partes = [
     `¡Hola! 💖 Quiero hacer este pedido en ${tienda.nombre}:`,
+    ...(codigo ? [`Pedido *${codigo}*`] : []),
     '',
     ...lineas,
     '',

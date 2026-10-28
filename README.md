@@ -19,6 +19,10 @@ Hecho con [Astro](https://astro.build) + TypeScript + Tailwind CSS 4, con islas 
 
 ## Agregar o cambiar productos
 
+Hay dos formas. Mientras Supabase no esté conectado, se usa el archivo YAML; apenas se conecte, manda la base de datos y se edita desde el panel **/admin** (ver [Base de datos](#base-de-datos-supabase)).
+
+### Con el archivo (sin base de datos)
+
 1. Pon la foto en `public/productos/` (ideal: cuadrada, fondo claro o transparente, `.jpg`, `.png` o `.webp`, menos de 300 KB).
 2. Abre `src/data/productos.yaml`, copia un bloque completo y cambia los datos:
 
@@ -67,28 +71,69 @@ npm run dev
 
 La ruta base se detecta sola, así que también funciona si luego le pones un dominio propio (Settings → Pages → Custom domain).
 
+## Base de datos (Supabase)
+
+El sitio ya está preparado para Supabase. Al conectarlo:
+
+- Los productos se cargan desde la tabla `productos` (con fotos en Supabase Storage).
+- Cada pedido enviado por WhatsApp queda guardado con un código (ej. `SALO-7KQ4`) que también aparece en el mensaje.
+- El panel **https://mibernal.github.io/el-rinconcito-de-salo/admin/** permite agregar/editar productos con foto, manejar stock y cambiar el estado de los pedidos.
+- Al marcar un pedido como *Confirmado* se descuenta el stock; si se cancela, se devuelve. Con stock en 0 el producto sale como agotado.
+
+### Pasos para activarla (una sola vez)
+
+1. **Crear el proyecto:** en [supabase.com](https://supabase.com) → *New project*. Región sugerida: São Paulo (`sa-east-1`), la más cercana a Colombia.
+2. **Crear las tablas:** *SQL Editor* → pegar y ejecutar `supabase/migrations/20261028000000_tienda.sql`. Para cargar los 14 productos de ejemplo, ejecutar también `supabase/seed.sql`.
+3. **Crear el usuario administrador:** *Authentication → Users → Add user* (correo y contraseña, marcando *Auto confirm*). Entrar a `/admin/` con ese usuario: la página muestra la línea SQL exacta para darle permisos de administrador; ejecutarla en el *SQL Editor*.
+4. **Cerrar el registro público:** *Authentication → Sign In / Providers* → desactivar *Allow new users to sign up*.
+5. **Conectar el sitio:** en *Project Settings → API Keys* copiar la URL del proyecto y la clave **publishable** (o *anon*). En GitHub: *Settings → Secrets and variables → Actions → Variables* → crear `PUBLIC_SUPABASE_URL` y `PUBLIC_SUPABASE_KEY`. Luego *Actions → Publicar en GitHub Pages → Run workflow*.
+6. **Botón "Publicar cambios" del panel (opcional pero recomendado):**
+   - En GitHub crear un token *fine-grained* (*Settings → Developer settings → Personal access tokens*) solo para este repositorio con permiso **Contents: Read and write**.
+   - Instalar la función: `npx supabase login`, `npx supabase link --project-ref TU_REF`, `npx supabase functions deploy publicar`, `npx supabase secrets set GITHUB_TOKEN=el_token`.
+   - Sin este paso, los cambios del panel aparecen en la página con la publicación automática diaria o al correr el workflow a mano.
+
+La clave publishable es pública por diseño: lo que se puede hacer con ella lo limitan las reglas RLS de la migración (el público solo lee productos visibles y crea pedidos con precios tomados de la base de datos; solo los administradores editan).
+
+> El sitio se republica solo cada día a las 6:17 a. m. (hora Colombia): eso refresca stock y precios y evita que Supabase pause el proyecto gratuito por inactividad.
+
 ## Cómo está organizado
 
 ```
 src/
-  config.ts              ← datos de la tienda (WhatsApp, nombre, pagos…)
-  data/productos.yaml    ← catálogo
-  content.config.ts      ← validación de los productos (Zod)
-  lib/cart.ts            ← bolsita (nanostores, se guarda en el navegador)
-  lib/whatsapp.ts        ← arma los mensajes de WhatsApp
-  components/            ← secciones de la página
-  components/cart/       ← bolsita (Preact)
-  pages/index.astro      ← portada + catálogo
+  config.ts                 ← datos de la tienda (WhatsApp, nombre, pagos…)
+  data/productos.yaml       ← catálogo cuando no hay base de datos
+  lib/cargar-productos.ts   ← lee productos de Supabase o del YAML
+  lib/pedidos.ts            ← registra pedidos en Supabase
+  lib/cart.ts               ← bolsita (nanostores, se guarda en el navegador)
+  lib/whatsapp.ts           ← arma los mensajes de WhatsApp
+  components/               ← secciones de la página
+  components/cart/          ← bolsita (Preact)
+  components/admin/         ← panel de administración (Preact + supabase-js)
+  pages/index.astro         ← portada + catálogo
   pages/producto/[id].astro ← una página por producto
+  pages/admin.astro         ← panel /admin
+supabase/
+  migrations/               ← tablas, reglas de seguridad, pedidos, stock, fotos
+  seed.sql                  ← productos de ejemplo
+  functions/publicar/       ← botón "Publicar cambios" del panel
 public/
-  productos/             ← fotos de productos
-  og.jpg                 ← imagen que aparece al compartir el enlace
+  productos/                ← fotos de productos (modo archivo)
+  og.jpg                    ← imagen que aparece al compartir el enlace
 ```
 
-## Camino a tienda en línea
+## Estado de la tienda virtual
 
-La estructura ya está pensada para crecer:
-
-- **Editar productos sin código:** agregar [Sveltia CMS](https://github.com/sveltia/sveltia-cms) o Decap CMS sobre `productos.yaml` (se entra con la cuenta de GitHub desde el navegador).
-- **Pagos en línea:** pasar Astro a modo servidor (adaptador de Vercel o Netlify) y conectar una pasarela colombiana como Wompi, Bold o Mercado Pago; la bolsita (`lib/cart.ts`) se reutiliza tal cual.
-- **Inventario real:** cambiar el `file()` loader de `content.config.ts` por uno que lea de una base de datos o de un headless commerce; las páginas no cambian.
+| Función | Estado |
+| --- | --- |
+| Catálogo con categorías, búsqueda y página por producto | ✅ |
+| Bolsita (carrito) que se guarda en el navegador | ✅ |
+| Pedido por WhatsApp con detalle, total, nombre y nota | ✅ |
+| Etiquetas nuevo / favorito / oferta con descuento, agotados | ✅ |
+| Imagen para compartir en WhatsApp/redes, SEO por producto | ✅ |
+| Base de datos de productos con panel /admin y fotos | ✅ listo, falta activar Supabase |
+| Registro de pedidos con código y estados | ✅ listo, falta activar Supabase |
+| Inventario que se descuenta al confirmar pedidos | ✅ listo, falta activar Supabase |
+| Pago en línea (Wompi, Bold, Mercado Pago) | ⏳ requiere backend: Supabase Edge Function + webhook |
+| Costo de envío por zona | ⏳ pendiente |
+| Cuentas de cliente / historial de compras | ⏳ pendiente (Supabase Auth) |
+| Términos, política de datos (Ley 1581) y derecho de retracto | ⏳ pendiente, necesario antes de cobrar en línea |

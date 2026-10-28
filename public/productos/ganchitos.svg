@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none"><ellipse cx="120" cy="208" rx="70" ry="8" fill="#3B1A2A" opacity=".09"/>
+<g transform="translate(118 72) rotate(-14)">
+  <path d="M-52,0 C-52,-15 -30,-19 0,-17 C30,-15 52,-8 52,0 C52,8 30,15 0,17 C-30,19 -52,15 -52,0 Z" fill="#F8A9BC" stroke="#3B1A2A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M-36,0 C-36,-6 -22,-8 0,-7 C22,-6 34,-3 34,0 C34,3 22,6 0,7 C-22,8 -36,6 -36,0 Z" fill="#FFFFFF" opacity=".7"/>
+  <path d="M-40,-8 C-30,-12 -16,-12 -4,-11" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+</g><g transform="translate(124 122) rotate(-14)">
+  <path d="M-52,0 C-52,-15 -30,-19 0,-17 C30,-15 52,-8 52,0 C52,8 30,15 0,17 C-30,19 -52,15 -52,0 Z" fill="#C2A1DD" stroke="#3B1A2A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M-36,0 C-36,-6 -22,-8 0,-7 C22,-6 34,-3 34,0 C34,3 22,6 0,7 C-22,8 -36,6 -36,0 Z" fill="#FFFFFF" opacity=".7"/>
+  <path d="M-40,-8 C-30,-12 -16,-12 -4,-11" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+</g><g transform="translate(130 172) rotate(-14)">
+  <path d="M-52,0 C-52,-15 -30,-19 0,-17 C30,-15 52,-8 52,0 C52,8 30,15 0,17 C-30,19 -52,15 -52,0 Z" fill="#9ECDBC" stroke="#3B1A2A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M-36,0 C-36,-6 -22,-8 0,-7 C22,-6 34,-3 34,0 C34,3 22,6 0,7 C-22,8 -36,6 -36,0 Z" fill="#FFFFFF" opacity=".7"/>
+  <path d="M-40,-8 C-30,-12 -16,-12 -4,-11" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+</g>
+<path transform="translate(200 112) scale(1.1)" d="M0,7 C-11,-1 -13,-10 -6.5,-12.5 C-2.5,-14 0,-11 0,-9 C0,-11 2.5,-14 6.5,-12.5 C13,-10 11,-1 0,7 Z" fill="#D9045A" />
+<path transform="translate(46 120) scale(1)" d="M0,-12 C1.5,-3 3,-1.5 12,0 C3,1.5 1.5,3 0,12 C-1.5,3 -3,1.5 -12,0 C-3,-1.5 -1.5,-3 0,-12 Z" fill="#FFFFFF"/><path transform="translate(196 40) scale(0.8)" d="M0,-12 C1.5,-3 3,-1.5 12,0 C3,1.5 1.5,3 0,12 C-1.5,3 -3,1.5 -12,0 C-3,-1.5 -1.5,-3 0,-12 Z" fill="#FFFFFF"/></svg>

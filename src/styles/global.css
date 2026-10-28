@@ -1,0 +1,140 @@
+@import 'tailwindcss';
+
+/* Paleta tomada del afiche de la tienda */
+@theme {
+  --color-tinta: #2b1220; /* texto: negro baya, como las letras del logo */
+  --color-tinta-suave: #6b4a5a;
+  --color-fucsia: #d9045a; /* "de Salo" */
+  --color-fucsia-oscuro: #b0034a;
+  --color-nube: #fff5f8; /* fondo general */
+  --color-pincel: #fbcde2; /* trazo de pincel detrás del lema */
+  --color-rosa: #fcdde6;
+  --color-menta: #d6efe5;
+  --color-menta-fuerte: #2f7d64;
+  --color-lavanda: #e9ddf6;
+  --color-lavanda-fuerte: #7350a0;
+  --color-durazno: #fbe1d6;
+  --color-oro: #c47e61; /* oro rosa de las brochas */
+
+  --font-script: 'Pacifico', 'Brush Script MT', cursive;
+  --font-sans: 'Fredoka Variable', 'Fredoka', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+
+  --radius-tile: 1.75rem;
+
+  --animate-pop: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-drop: drop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-draw: draw 0.9s ease-out both;
+  --animate-bounce-once: bounce-once 0.45s ease-out;
+
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.4) rotate(-12deg); }
+    to { opacity: 1; transform: scale(1) rotate(0); }
+  }
+  @keyframes drop {
+    0% { opacity: 0; transform: translateY(-40px) rotate(-14deg); }
+    60% { opacity: 1; transform: translateY(4px) rotate(6deg); }
+    100% { opacity: 1; transform: translateY(0) rotate(-4deg); }
+  }
+  @keyframes draw {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes bounce-once {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(1.3); }
+    70% { transform: scale(0.92); }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background-color: var(--color-nube);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 {
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-fucsia);
+    outline-offset: 3px;
+    border-radius: 0.75rem;
+  }
+  ::selection {
+    background: var(--color-pincel);
+    color: var(--color-tinta);
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 1.0625rem;
+    line-height: 1;
+    transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:active:not(:disabled) {
+    transform: translateY(1px) scale(0.98);
+  }
+  .btn-fucsia {
+    background: var(--color-fucsia);
+    color: #fff;
+    box-shadow: 0 3px 0 var(--color-fucsia-oscuro);
+  }
+  .btn-fucsia:hover:not(:disabled) {
+    background: var(--color-fucsia-oscuro);
+  }
+  .btn-borde {
+    background: #fff;
+    color: var(--color-tinta);
+    box-shadow: inset 0 0 0 2px var(--color-tinta), 0 3px 0 var(--color-tinta);
+  }
+  .btn-borde:hover {
+    background: var(--color-pincel);
+  }
+
+  .tile-rosa { background-color: var(--color-rosa); }
+  .tile-menta { background-color: var(--color-menta); }
+  .tile-lavanda { background-color: var(--color-lavanda); }
+  .tile-durazno { background-color: var(--color-durazno); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

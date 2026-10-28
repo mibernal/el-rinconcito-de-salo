@@ -1,0 +1,77 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import { imagenProducto } from '../lib/utils';
+
+interface Props {
+  producto: CollectionEntry<'productos'>;
+  /** Selector de un <input> con la cantidad (página de producto). */
+  cantidadDesde?: string;
+  grande?: boolean;
+}
+
+const { producto, cantidadDesde, grande = false } = Astro.props;
+const { id, data } = producto;
+---
+
+<button
+  type="button"
+  data-agregar
+  data-id={id}
+  data-nombre={data.nombre}
+  data-precio={data.precio}
+  data-imagen={imagenProducto(data.imagen)}
+  data-color={data.color}
+  data-cantidad-desde={cantidadDesde}
+  disabled={!data.disponible}
+  aria-label={data.disponible ? `Agregar ${data.nombre} a mi bolsita` : `${data.nombre} está agotado`}
+  class:list={['boton-agregar', grande && 'boton-agregar--grande']}
+>
+  <Icon nombre={data.disponible ? 'mas' : 'cerrar'} size={grande ? 22 : 19} />
+  <span data-texto>{data.disponible ? (grande ? 'Agregar a mi bolsita' : 'Agregar') : 'Agotado'}</span>
+</button>
+
+<style>
+  .boton-agregar {
+    display: inline-flex;
+    width: 100%;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    color: var(--color-fucsia-oscuro);
+    background: #fff;
+    box-shadow: inset 0 0 0 2px var(--color-fucsia);
+    transition: background-color 0.15s, color 0.15s, transform 0.15s;
+  }
+  .boton-agregar:hover:not(:disabled) {
+    background: var(--color-fucsia);
+    color: #fff;
+  }
+  .boton-agregar:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .boton-agregar.agregado {
+    background: var(--color-menta-fuerte);
+    box-shadow: none;
+    color: #fff;
+  }
+  .boton-agregar:disabled {
+    color: var(--color-tinta-suave);
+    box-shadow: inset 0 0 0 2px var(--color-rosa);
+    background: transparent;
+  }
+  .boton-agregar--grande {
+    min-height: 3.25rem;
+    font-size: 1.125rem;
+    color: #fff;
+    background: var(--color-fucsia);
+    box-shadow: 0 3px 0 var(--color-fucsia-oscuro);
+  }
+  .boton-agregar--grande:hover:not(:disabled) {
+    background: var(--color-fucsia-oscuro);
+  }
+</style>

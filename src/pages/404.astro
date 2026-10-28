@@ -1,0 +1,13 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { url } from '../lib/utils';
+---
+
+<Layout titulo="Página no encontrada">
+  <section class="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
+    <p class="font-script text-7xl text-fucsia">Ups</p>
+    <h1 class="mt-4 text-3xl font-semibold">Esta página no existe</h1>
+    <p class="mt-3 text-tinta-suave">Puede que el enlace esté mal escrito o que el producto ya no esté en el catálogo.</p>
+    <a href={url('#catalogo')} class="btn btn-fucsia mt-8">Ver catálogo</a>
+  </section>
+</Layout>

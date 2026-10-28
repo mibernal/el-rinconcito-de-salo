@@ -1,0 +1,51 @@
+---
+import { tienda } from '../config';
+
+const pasos = [
+  {
+    titulo: 'Elige tus productos',
+    texto: 'Toca “Agregar” en lo que te guste. Todo queda guardado en tu bolsita.',
+  },
+  {
+    titulo: 'Revisa tu bolsita',
+    texto: 'Cambia cantidades, escribe tu nombre y deja una nota si quieres.',
+  },
+  {
+    titulo: 'Envía el pedido por WhatsApp',
+    texto: 'Se abre WhatsApp con tu pedido listo. Te respondemos para confirmar pago y entrega.',
+  },
+];
+---
+
+<section id="como-pedir" class="border-y-2 border-dashed border-pincel bg-white">
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+    <h2 class="text-4xl font-semibold sm:text-5xl">Cómo pedir</h2>
+
+    <ol class="mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
+      {
+        pasos.map((paso, i) => (
+          <li class="grid grid-cols-[3.5rem_1fr] gap-x-3 md:block">
+            <span class="font-script text-6xl leading-none text-fucsia md:text-7xl" aria-hidden="true">
+              {i + 1}
+            </span>
+            <div class="md:mt-3">
+              <h3 class="text-xl font-semibold">{paso.titulo}</h3>
+              <p class="mt-1 max-w-[34ch] text-tinta-suave">{paso.texto}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <dl class="mt-12 grid gap-4 sm:grid-cols-2">
+      <div class="rounded-tile bg-menta px-6 py-5">
+        <dt class="font-semibold">Formas de pago</dt>
+        <dd class="mt-1">{tienda.pagos}</dd>
+      </div>
+      <div class="rounded-tile bg-lavanda px-6 py-5">
+        <dt class="font-semibold">Entregas</dt>
+        <dd class="mt-1">{tienda.entregas}</dd>
+      </div>
+    </dl>
+  </div>
+</section>

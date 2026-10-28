@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Catalogo from '../components/Catalogo.astro';
+import ComoPedir from '../components/ComoPedir.astro';
+import SobreMi from '../components/SobreMi.astro';
+
+// Mismo orden del archivo de productos, con los agotados al final.
+const productos = (await getCollection('productos')).sort(
+  (a, b) => Number(b.data.disponible) - Number(a.data.disponible) || a.data.orden - b.data.orden,
+);
+---
+
+<Layout>
+  <Hero />
+  <Catalogo productos={productos} />
+  <ComoPedir />
+  <SobreMi />
+</Layout>

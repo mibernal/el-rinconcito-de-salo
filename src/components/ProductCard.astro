@@ -1,0 +1,58 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Etiqueta from './Etiqueta.astro';
+import BotonAgregar from './BotonAgregar.astro';
+import { CATEGORIAS } from '../content.config';
+import { formatoPrecio, imagenProducto, normalizar, url } from '../lib/utils';
+
+interface Props {
+  producto: CollectionEntry<'productos'>;
+}
+
+const { id, data } = Astro.props.producto;
+const enlace = url(`producto/${id}/`);
+const textoBusqueda = normalizar(`${data.nombre} ${data.descripcion} ${CATEGORIAS[data.categoria]}`);
+---
+
+<li class="group flex flex-col" data-producto data-categoria={data.categoria} data-buscar={textoBusqueda}>
+  <a
+    href={enlace}
+    tabindex="-1"
+    aria-hidden="true"
+    class:list={[`tile-${data.color}`, 'relative block aspect-square overflow-hidden rounded-tile']}
+  >
+    <img
+      src={imagenProducto(data.imagen)}
+      alt=""
+      width="240"
+      height="240"
+      loading="lazy"
+      decoding="async"
+      class:list={[
+        'size-full object-contain p-[6%] transition-transform duration-300 ease-out group-hover:-rotate-3 group-hover:scale-105',
+        !data.disponible && 'opacity-50 grayscale-[40%]',
+      ]}
+    />
+    {data.etiqueta && <Etiqueta tipo={data.etiqueta} precio={data.precio} precioAntes={data.precioAntes} />}
+  </a>
+
+  <div class="mt-3 flex flex-1 flex-col px-1">
+    <h3 class="text-[1.05rem] font-medium leading-snug">
+      <a href={enlace} class="rounded-md hover:text-fucsia-oscuro">{data.nombre}</a>
+    </h3>
+    <p class="mt-1 flex flex-wrap items-baseline gap-x-2">
+      <span class="text-lg font-semibold tabular-nums">{formatoPrecio(data.precio)}</span>
+      {
+        data.precioAntes && (
+          <s class="text-sm tabular-nums text-tinta-suave">
+            <span class="sr-only">Antes</span>
+            {formatoPrecio(data.precioAntes)}
+          </s>
+        )
+      }
+    </p>
+    <div class="mt-auto pt-3">
+      <BotonAgregar producto={Astro.props.producto} />
+    </div>
+  </div>
+</li>

@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  tipo: 'nuevo' | 'favorito' | 'oferta';
+  precio: number;
+  precioAntes?: number;
+  grande?: boolean;
+}
+
+const { tipo, precio, precioAntes, grande = false } = Astro.props;
+const descuento = precioAntes ? Math.round((1 - precio / precioAntes) * 100) : 0;
+---
+
+<span
+  class:list={[
+    'absolute inline-flex -rotate-6 items-center gap-1 rounded-full font-semibold text-white shadow-[0_2px_0_rgb(43_18_32/0.25)]',
+    grande ? 'left-5 top-5 px-4 py-1.5 text-base' : 'left-3 top-3 px-3 py-1 text-sm',
+    tipo === 'nuevo' && 'bg-menta-fuerte',
+    tipo === 'favorito' && 'bg-fucsia',
+    tipo === 'oferta' && 'bg-tinta',
+  ]}
+>
+  {tipo === 'favorito' && <Icon nombre="corazon" size={15} />}
+  {tipo === 'nuevo' && 'Nuevo'}
+  {tipo === 'favorito' && 'Favorito'}
+  {tipo === 'oferta' && (descuento > 0 ? `Oferta −${descuento}%` : 'Oferta')}
+</span>

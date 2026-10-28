@@ -1,0 +1,38 @@
+---
+import Logo from './Logo.astro';
+import BotonBolsita from './cart/BotonBolsita.tsx';
+import { url } from '../lib/utils';
+
+const enlaces = [
+  { texto: 'Catálogo', href: url('#catalogo') },
+  { texto: 'Cómo pedir', href: url('#como-pedir') },
+  { texto: 'Sobre mí', href: url('#sobre-mi') },
+];
+---
+
+<header class="sticky top-0 z-30 border-b-2 border-dashed border-pincel bg-nube/90 backdrop-blur-md">
+  <div class="mx-auto flex h-18 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+    <a href={url()} class="-ml-1 rounded-xl px-1 py-1 text-[1.35rem] sm:text-2xl" aria-label="Ir al inicio">
+      <Logo />
+    </a>
+
+    <nav aria-label="Principal" class="hidden md:block">
+      <ul class="flex items-center gap-1">
+        {
+          enlaces.map((e) => (
+            <li>
+              <a
+                href={e.href}
+                class="rounded-full px-4 py-2 font-medium text-tinta transition-colors hover:bg-pincel"
+              >
+                {e.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <BotonBolsita client:load />
+  </div>
+</header>

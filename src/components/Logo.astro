@@ -1,0 +1,18 @@
+---
+import { tienda } from '../config';
+
+interface Props {
+  class?: string;
+  tono?: 'claro' | 'oscuro';
+}
+const { class: className = '', tono = 'oscuro' } = Astro.props;
+---
+
+<span class:list={['inline-flex flex-wrap gap-x-[0.28em] font-script leading-tight', className]}>
+  <span class:list={['inline-block whitespace-nowrap', tono === 'oscuro' ? 'text-tinta' : 'text-white']}>
+    {tienda.logoLinea1}
+  </span>
+  <span class:list={['inline-block whitespace-nowrap', tono === 'oscuro' ? 'text-fucsia' : 'text-pincel']}>
+    {tienda.logoLinea2}
+  </span>
+</span>

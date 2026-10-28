@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none"><ellipse cx="120" cy="208" rx="76" ry="8" fill="#3B1A2A" opacity=".09"/>
+<path d="M72,100 L72,62 C72,50 92,40 112,52 L112,100 Z" fill="#F8A9BC" stroke="#3B1A2A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M80,64 C86,58 94,56 102,58" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".6"/>
+<rect x="66" y="96" width="52" height="18" rx="4" fill="#FFFFFF" stroke="#3B1A2A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="62" y="112" width="60" height="92" rx="12" fill="#F7B9A1" stroke="#3B1A2A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="72" y="134" width="40" height="46" rx="9" fill="#FFFFFF" stroke="#3B1A2A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<path transform="translate(92 158) scale(0.9)" d="M0,7 C-11,-1 -13,-10 -6.5,-12.5 C-2.5,-14 0,-11 0,-9 C0,-11 2.5,-14 6.5,-12.5 C13,-10 11,-1 0,7 Z" fill="#D9045A" />
+<rect x="68" y="120" width="6" height="74" rx="3" fill="#FFFFFF" opacity=".5"/>
+<g transform="rotate(-8 170 180)">
+  <rect x="132" y="156" width="80" height="48" rx="12" fill="#F7B9A1" stroke="#3B1A2A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M154,160 v40" stroke="#3B1A2A" stroke-opacity=".25" stroke-width="3" stroke-linecap="round"/>
+  <path d="M164,166 h38" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity=".5"/>
+</g>
+<path transform="translate(176 60) scale(1.2)" d="M0,-12 C1.5,-3 3,-1.5 12,0 C3,1.5 1.5,3 0,12 C-1.5,3 -3,1.5 -12,0 C-3,-1.5 -1.5,-3 0,-12 Z" fill="#FFFFFF"/><path transform="translate(144 112) scale(0.7)" d="M0,-12 C1.5,-3 3,-1.5 12,0 C3,1.5 1.5,3 0,12 C-1.5,3 -3,1.5 -12,0 C-3,-1.5 -1.5,-3 0,-12 Z" fill="#FFFFFF"/></svg>

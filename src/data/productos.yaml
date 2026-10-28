@@ -1,0 +1,190 @@
+# ─────────────────────────────────────────────────────────────
+#  Productos de El Rinconcito de Salo
+#  Para agregar uno, copia un bloque completo (desde "- id:") y cambia los datos.
+#
+#  id          → nombre corto sin espacios ni tildes (se usa en el enlace)
+#  categoria   → mascarillas | cuidado-facial | labios | maquillaje | accesorios
+#  precio      → en pesos, sin puntos (5000 = $5.000)
+#  precioAntes → opcional, para mostrar descuento
+#  imagen      → archivo dentro de public/productos/ (.jpg, .png, .webp o .svg)
+#  color       → fondo de la tarjeta: rosa | menta | lavanda | durazno
+#  etiqueta    → opcional: nuevo | favorito | oferta
+#  disponible  → false para mostrarlo como agotado
+#
+#  Los productos y precios de abajo son de EJEMPLO. Reemplázalos por los reales.
+# ─────────────────────────────────────────────────────────────
+
+- id: mascarilla-rosas
+  nombre: Mascarilla de rosas
+  categoria: mascarillas
+  precio: 5000
+  descripcion: Mascarilla de tela hidratante con extracto de rosas. Deja la piel suave y fresquita.
+  detalles:
+    - Uso único, 20 minutos
+    - Para todo tipo de piel
+    - Aroma suave a rosas
+  imagen: mascarilla-rosas.svg
+  color: rosa
+  etiqueta: favorito
+  disponible: true
+
+- id: mascarilla-te-verde
+  nombre: Mascarilla de té verde
+  categoria: mascarillas
+  precio: 5000
+  descripcion: Mascarilla refrescante de té verde, ideal después de un día de calor.
+  detalles:
+    - Uso único, 15 a 20 minutos
+    - Ayuda a refrescar la piel
+  imagen: mascarilla-te-verde.svg
+  color: menta
+  disponible: true
+
+- id: mascarilla-lavanda
+  nombre: Mascarilla de lavanda
+  categoria: mascarillas
+  precio: 5000
+  descripcion: Mascarilla calmante con lavanda para relajarte antes de dormir.
+  detalles:
+    - Uso único, 20 minutos
+    - Aroma relajante
+  imagen: mascarilla-lavanda.svg
+  color: lavanda
+  disponible: true
+
+- id: kit-mascarillas
+  nombre: Kit de 3 mascarillas
+  categoria: mascarillas
+  precio: 13000
+  precioAntes: 15000
+  descripcion: Una de rosas, una de té verde y una de lavanda. Perfecto para regalar o para una noche de spa con amigas.
+  detalles:
+    - Incluye 3 mascarillas surtidas
+    - Viene en bolsita de regalo
+  imagen: kit-mascarillas.svg
+  color: lavanda
+  etiqueta: oferta
+  disponible: true
+
+- id: crema-hidratante
+  nombre: Crema hidratante facial
+  categoria: cuidado-facial
+  precio: 16000
+  descripcion: Crema ligera de uso diario que se absorbe rápido y no deja la piel grasosa.
+  detalles:
+    - 50 g
+    - Uso de día y de noche
+  imagen: crema-hidratante.svg
+  color: rosa
+  disponible: true
+
+- id: serum-facial
+  nombre: Sérum facial
+  categoria: cuidado-facial
+  precio: 22000
+  descripcion: Sérum suave con gotero. Unas gotitas antes de la crema y listo.
+  detalles:
+    - 30 ml
+    - Textura ligera
+  imagen: serum-facial.svg
+  color: lavanda
+  etiqueta: nuevo
+  disponible: true
+
+- id: gel-limpiador
+  nombre: Gel limpiador suave
+  categoria: cuidado-facial
+  precio: 15000
+  descripcion: Limpia la cara sin resecarla. Hace espumita y huele delicioso.
+  detalles:
+    - 120 ml
+    - Uso en la mañana y en la noche
+  imagen: gel-limpiador.svg
+  color: menta
+  disponible: true
+
+- id: balsamo-labial
+  nombre: Bálsamo labial de durazno
+  categoria: labios
+  precio: 6000
+  descripcion: Bálsamo hidratante con sabor a durazno para unos labios suavecitos.
+  detalles:
+    - Barra de 4 g
+    - Con sabor a durazno
+  imagen: balsamo-labial.svg
+  color: durazno
+  disponible: true
+
+- id: brillo-labial
+  nombre: Brillo labial rosado
+  categoria: labios
+  precio: 8000
+  descripcion: Brillo con un toque de color rosado y acabado jugoso.
+  detalles:
+    - Aplicador de esponjita
+    - Color rosado translúcido
+  imagen: brillo-labial.svg
+  color: menta
+  etiqueta: favorito
+  disponible: true
+
+- id: paleta-sombras
+  nombre: Paleta de sombras rosé
+  categoria: maquillaje
+  precio: 18000
+  descripcion: Seis tonos rosados, malva y durazno, con espejo incluido.
+  detalles:
+    - 6 colores
+    - Acabados mate y brillante
+  imagen: paleta-sombras.svg
+  color: lavanda
+  disponible: true
+
+- id: rubor
+  nombre: Rubor en polvo
+  categoria: maquillaje
+  precio: 12000
+  descripcion: Rubor rosado para un efecto natural en las mejillas. Trae espejo.
+  detalles:
+    - Polvo compacto
+    - Tono rosa natural
+  imagen: rubor.svg
+  color: durazno
+  disponible: true
+
+- id: set-brochas
+  nombre: Set de 4 brochas
+  categoria: maquillaje
+  precio: 24000
+  descripcion: Cuatro brochas suaves con su vasito para tenerlas siempre ordenadas.
+  detalles:
+    - 4 brochas de cerdas sintéticas
+    - Incluye vaso organizador
+  imagen: set-brochas.svg
+  color: rosa
+  disponible: false
+
+- id: diadema-spa
+  nombre: Diadema de moño para skincare
+  categoria: accesorios
+  precio: 9000
+  descripcion: Diadema de tela suavecita con moño para recogerte el pelo mientras te cuidas la cara.
+  detalles:
+    - Tela tipo toalla
+    - Talla única
+  imagen: diadema-spa.svg
+  color: durazno
+  etiqueta: nuevo
+  disponible: true
+
+- id: ganchitos
+  nombre: Ganchitos de colores
+  categoria: accesorios
+  precio: 7000
+  descripcion: Paquete de 6 ganchitos en tonos pastel para combinar con tu outfit.
+  detalles:
+    - 6 unidades
+    - Colores rosa, lila y menta
+  imagen: ganchitos.svg
+  color: rosa
+  disponible: true

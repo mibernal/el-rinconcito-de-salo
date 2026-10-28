@@ -1,0 +1,162 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import heroImg from '../assets/productos-hero.jpg';
+import { tienda } from '../config';
+import { enlaceWhatsApp, mensajeSaludo } from '../lib/whatsapp';
+---
+
+<section class="relative overflow-hidden">
+  <div class="mx-auto max-w-6xl px-4 pb-10 pt-10 text-center sm:px-6 sm:pt-14">
+    <h1 class="relative mx-auto inline-block px-6 font-script font-normal">
+      <span class="block text-[clamp(2.6rem,10.5vw,6.4rem)] leading-[1.25] text-tinta">
+        {tienda.logoLinea1}
+      </span>
+      <span
+        class="relative -mt-[0.18em] block -rotate-3 text-[clamp(3.4rem,14vw,8.2rem)] leading-[1.15] text-fucsia"
+      >
+        {tienda.logoLinea2}
+        <!-- subrayado a mano -->
+        <svg
+          class="absolute -bottom-[0.12em] left-1/2 w-[85%] -translate-x-1/2 overflow-visible"
+          viewBox="0 0 420 28"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M8,20 C110,6 290,2 412,12"
+            pathLength="1"
+            stroke-dasharray="1"
+            class="animate-draw [animation-delay:0.55s]"
+            stroke="currentColor"
+            stroke-width="7"
+            stroke-linecap="round"></path>
+        </svg>
+      </span>
+
+      <!-- corona -->
+      <svg
+        class="absolute -top-8 right-[3%] w-[clamp(3rem,8.5vw,5.2rem)] sm:-top-14 animate-drop text-fucsia [animation-delay:0.25s] sm:right-[10%]"
+        viewBox="0 0 120 92"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M18,74 L10,30 L38,52 L60,16 L82,52 L110,30 L102,74 Z"
+          stroke="currentColor"
+          stroke-width="6"
+          stroke-linejoin="round"></path>
+        <path d="M20,84 H100" stroke="currentColor" stroke-width="6" stroke-linecap="round"></path>
+        <circle cx="10" cy="26" r="5" fill="currentColor"></circle>
+        <circle cx="60" cy="11" r="5" fill="currentColor"></circle>
+        <circle cx="110" cy="26" r="5" fill="currentColor"></circle>
+      </svg>
+
+      <!-- corazones y destellos -->
+      <svg
+        class="absolute left-[-4%] top-[8%] w-[clamp(2.2rem,6vw,3.8rem)] animate-pop text-fucsia [animation-delay:0.4s]"
+        viewBox="0 0 64 60"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M32,52 C12,38 4,26 8,15 C12,5 26,3 32,16 C38,3 52,5 56,15 C60,26 52,38 32,52 Z"
+          stroke="currentColor"
+          stroke-width="5"
+          stroke-linejoin="round"></path>
+      </svg>
+      <svg
+        class="absolute bottom-[14%] right-[-6%] w-[clamp(2rem,5vw,3.2rem)] rotate-12 animate-pop text-fucsia [animation-delay:0.5s]"
+        viewBox="0 0 64 60"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M32,52 C12,38 4,26 8,15 C12,5 26,3 32,16 C38,3 52,5 56,15 C60,26 52,38 32,52 Z"
+          stroke="currentColor"
+          stroke-width="5"
+          stroke-linejoin="round"></path>
+      </svg>
+      <svg
+        class="absolute bottom-[30%] left-[-2%] w-[clamp(1.4rem,3.5vw,2.2rem)] animate-pop text-tinta [animation-delay:0.6s]"
+        viewBox="0 0 40 40"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M20,3 C21.5,14 26,18.5 37,20 C26,21.5 21.5,26 20,37 C18.5,26 14,21.5 3,20 C14,18.5 18.5,14 20,3 Z"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linejoin="round"></path>
+      </svg>
+      <svg
+        class="absolute right-[-1%] top-[18%] w-[clamp(1.2rem,3vw,1.9rem)] animate-pop text-tinta [animation-delay:0.7s]"
+        viewBox="0 0 40 40"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M20,3 C21.5,14 26,18.5 37,20 C26,21.5 21.5,26 20,37 C18.5,26 14,21.5 3,20 C14,18.5 18.5,14 20,3 Z"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linejoin="round"></path>
+      </svg>
+    </h1>
+
+    <p class="relative isolate mx-auto mt-6 w-fit px-7 py-3 text-[clamp(1.15rem,3.6vw,1.6rem)] font-medium">
+      <svg
+        class="absolute inset-0 -z-10 h-full w-full text-pincel"
+        viewBox="0 0 600 120"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path
+          fill="currentColor"
+          d="M14,38 C80,18 210,22 320,16 C420,10 520,14 588,24 C596,40 590,56 584,62 C592,74 594,92 580,104 C470,110 330,112 210,108 C130,106 60,110 18,100 C8,88 16,76 10,66 C4,56 8,46 14,38 Z"
+        ></path>
+        <path
+          fill="currentColor"
+          opacity=".55"
+          d="M560,8 C576,10 592,14 598,20 L596,26 C580,20 566,16 552,14 Z M4,104 C14,108 30,112 46,114 L40,118 C24,116 10,112 2,108 Z"
+        ></path>
+      </svg>
+      {tienda.lema}
+    </p>
+
+    <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+      <a href="#catalogo" class="btn btn-fucsia w-full max-w-xs text-lg sm:w-auto">Ver catálogo</a>
+      <a
+        href={enlaceWhatsApp(mensajeSaludo())}
+        target="_blank"
+        rel="noopener"
+        class="btn btn-borde w-full max-w-xs text-lg sm:w-auto"
+      >
+        <Icon nombre="chat" />
+        Escríbenos por WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <figure class="relative">
+      <Image
+        src={heroImg}
+        widths={[640, 960, 1254]}
+        sizes="(min-width: 1152px) 1104px, calc(100vw - 2rem)"
+        alt="Mascarillas faciales de colores, crema hidratante, sérum, brochas, labial y paleta de sombras"
+        loading="eager"
+        fetchpriority="high"
+        class="aspect-[4/3] w-full rounded-[2rem] object-cover object-center sm:aspect-[1254/494]"
+      />
+      <svg
+        class="absolute -right-2 -top-6 w-14 rotate-12 text-fucsia sm:-right-4 sm:-top-8 sm:w-20"
+        viewBox="0 0 64 60"
+        aria-hidden="true"
+      >
+        <path
+          fill="currentColor"
+          d="M32,52 C12,38 4,26 8,15 C12,5 26,3 32,16 C38,3 52,5 56,15 C60,26 52,38 32,52 Z"></path>
+      </svg>
+    </figure>
+  </div>
+</section>

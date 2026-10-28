@@ -1,0 +1,193 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import Etiqueta from '../../components/Etiqueta.astro';
+import BotonAgregar from '../../components/BotonAgregar.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { CATEGORIAS } from '../../content.config';
+import { tienda } from '../../config';
+import { formatoPrecio, imagenProducto, url } from '../../lib/utils';
+import { enlaceWhatsApp, mensajeProducto } from '../../lib/whatsapp';
+
+export const getStaticPaths = (async () => {
+  const productos = (await getCollection('productos')).sort((a, b) => a.data.orden - b.data.orden);
+  return productos.map((producto) => ({
+    params: { id: producto.id },
+    props: { producto, todos: productos },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  producto: CollectionEntry<'productos'>;
+  todos: CollectionEntry<'productos'>[];
+}
+
+const { producto, todos } = Astro.props;
+const { id, data } = producto;
+const categoria = CATEGORIAS[data.categoria];
+
+// "También te puede gustar": misma categoría primero, luego el resto
+const relacionados = [
+  ...todos.filter((p) => p.id !== id && p.data.categoria === data.categoria && p.data.disponible),
+  ...todos.filter((p) => p.id !== id && p.data.categoria !== data.categoria && p.data.disponible),
+].slice(0, 4);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: data.nombre,
+  description: data.descripcion,
+  image: new URL(imagenProducto(data.imagen), Astro.site).href,
+  brand: { '@type': 'Brand', name: tienda.nombre },
+  offers: {
+    '@type': 'Offer',
+    price: data.precio,
+    priceCurrency: 'COP',
+    availability: data.disponible ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+  },
+};
+---
+
+<Layout titulo={data.nombre} descripcion={data.descripcion}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+
+  <div class="mx-auto max-w-6xl px-4 pb-20 pt-6 sm:px-6 sm:pt-10">
+    <nav aria-label="Ruta" class="text-sm">
+      <ol class="flex flex-wrap items-center gap-1 text-tinta-suave">
+        <li>
+          <a href={url('#catalogo')} class="inline-flex items-center gap-1 rounded-full py-1 pr-2 hover:text-fucsia-oscuro">
+            <Icon nombre="atras" size={18} />
+            Catálogo
+          </a>
+        </li>
+        <li aria-hidden="true">/</li>
+        <li>
+          <a href={url(`?categoria=${data.categoria}#catalogo`)} class="rounded-full px-1 py-1 hover:text-fucsia-oscuro">
+            {categoria}
+          </a>
+        </li>
+      </ol>
+    </nav>
+
+    <article class="mt-4 grid gap-8 md:grid-cols-2 md:gap-12 lg:gap-16">
+      <div class:list={[`tile-${data.color}`, 'relative aspect-square overflow-hidden rounded-[2.25rem]']}>
+        <img
+          src={imagenProducto(data.imagen)}
+          alt={data.nombre}
+          width="480"
+          height="480"
+          class:list={['size-full object-contain p-[8%]', !data.disponible && 'opacity-50 grayscale-[40%]']}
+        />
+        {
+          data.etiqueta && (
+            <Etiqueta
+              tipo={data.etiqueta}
+              precio={data.precio}
+              precioAntes={data.precioAntes}
+              grande
+            />
+          )
+        }
+      </div>
+
+      <div class="flex flex-col md:py-4">
+        <h1 class="text-4xl font-semibold sm:text-5xl">{data.nombre}</h1>
+
+        <p class="mt-4 flex flex-wrap items-baseline gap-x-3">
+          <span class="text-3xl font-semibold tabular-nums text-fucsia-oscuro">{formatoPrecio(data.precio)}</span>
+          {
+            data.precioAntes && (
+              <s class="text-lg tabular-nums text-tinta-suave">
+                <span class="sr-only">Antes</span>
+                {formatoPrecio(data.precioAntes)}
+              </s>
+            )
+          }
+        </p>
+
+        <p class="mt-5 max-w-prose text-lg">{data.descripcion}</p>
+
+        {
+          data.detalles.length > 0 && (
+            <ul class="mt-5 space-y-2" role="list">
+              {data.detalles.map((d) => (
+                <li class="flex items-start gap-2">
+                  <Icon nombre="corazon" size={18} class="mt-1 shrink-0 text-fucsia" />
+                  <span>{d}</span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-stretch">
+          {
+            data.disponible && (
+              <div class="inline-flex h-[3.25rem] items-center justify-between self-start rounded-full bg-white shadow-[inset_0_0_0_2px_var(--color-pincel)] sm:self-auto" data-stepper>
+                <button type="button" data-paso="-1" class="grid size-12 place-items-center rounded-full hover:bg-pincel" aria-label="Menos">
+                  <Icon nombre="menos" size={20} />
+                </button>
+                <label>
+                  <span class="sr-only">Cantidad</span>
+                  <input
+                    id="cantidad"
+                    type="number"
+                    inputmode="numeric"
+                    min="1"
+                    max="20"
+                    value="1"
+                    class="w-10 bg-transparent text-center text-lg font-semibold tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                </label>
+                <button type="button" data-paso="1" class="grid size-12 place-items-center rounded-full hover:bg-pincel" aria-label="Más">
+                  <Icon nombre="mas" size={20} />
+                </button>
+              </div>
+            )
+          }
+          <div class="flex-1">
+            <BotonAgregar producto={producto} cantidadDesde="#cantidad" grande />
+          </div>
+        </div>
+
+        <a
+          href={enlaceWhatsApp(mensajeProducto(data.nombre, data.precio))}
+          target="_blank"
+          rel="noopener"
+          class="mt-4 inline-flex items-center gap-2 self-start rounded-full py-2 font-medium text-tinta underline decoration-pincel decoration-2 underline-offset-4 hover:decoration-fucsia"
+        >
+          <Icon nombre="chat" />
+          {data.disponible ? 'Preguntar por este producto' : 'Avísame cuando vuelva a llegar'}
+        </a>
+      </div>
+    </article>
+
+    {
+      relacionados.length > 0 && (
+        <section class="mt-20" aria-labelledby="relacionados">
+          <h2 id="relacionados" class="text-3xl font-semibold">También te puede gustar</h2>
+          <ul class="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4" role="list">
+            {relacionados.map((p) => <ProductCard producto={p} />)}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</Layout>
+
+<script>
+  const stepper = document.querySelector<HTMLElement>('[data-stepper]');
+  const campo = document.querySelector<HTMLInputElement>('#cantidad');
+  if (stepper && campo) {
+    const fijar = (n: number) => {
+      campo.value = String(Math.min(20, Math.max(1, Number.isFinite(n) ? n : 1)));
+    };
+    stepper.addEventListener('click', (e) => {
+      const boton = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-paso]');
+      if (boton) fijar(Number(campo.value) + Number(boton.dataset.paso));
+    });
+    campo.addEventListener('change', () => fijar(Number.parseInt(campo.value, 10)));
+  }
+</script>

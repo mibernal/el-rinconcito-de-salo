@@ -7,9 +7,11 @@ on:
   repository_dispatch:
     types: [publicar]
   workflow_dispatch:
-  # Diario 6:17 a. m. Colombia: refresca stock/precios y mantiene activo Supabase
+  # Cada hora de 7 a. m. a 10 p. m. (hora Colombia): lleva a la página los cambios
+  # hechos en el panel /admin y mantiene activo el proyecto gratuito de Supabase
   schedule:
-    - cron: '17 11 * * *'
+    - cron: '23 12-23 * * *'
+    - cron: '23 0-3 * * *'
 
 permissions:
   contents: read

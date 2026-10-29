@@ -1,4 +1,6 @@
-# Avisos y PRs automáticos con actualizaciones de seguridad
+# Avisos y PRs automáticos con actualizaciones de seguridad y versiones menores.
+# Las versiones mayores (ej. TypeScript 6 → 7) se ignoran: se actualizan a mano
+# cuando Astro las soporte.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -8,6 +10,10 @@ updates:
     groups:
       dependencias:
         patterns: ['*']
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
     open-pull-requests-limit: 3
   - package-ecosystem: github-actions
     directory: /

@@ -1,5 +1,7 @@
 # ─────────────────────────────────────────────────────────────
-#  Productos de El Rinconcito de Salo
+#  Productos de El Rinconcito de Salo — CATÁLOGO DE RESPALDO
+#  ⚠️ Mientras Supabase esté conectado, los productos se editan en el panel /admin
+#     y este archivo NO se usa (ver GUIA-PRODUCTOS.md).
 #  Para agregar uno, copia un bloque completo (desde "- id:") y cambia los datos.
 #
 #  id          → nombre corto sin espacios ni tildes (se usa en el enlace)

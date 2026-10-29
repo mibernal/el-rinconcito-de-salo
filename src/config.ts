@@ -14,9 +14,9 @@ export const tienda = {
   /**
    * Número de WhatsApp que recibe los pedidos: código de país + número, solo dígitos.
    * Ejemplo Colombia: 57 + 3001234567 → '573001234567'
-   * Recomendado: el número de un adulto responsable de la tienda.
+   * Es el número de la mamá de Salo (adulta responsable de la tienda).
    */
-  whatsapp: '573228957446',
+  whatsapp: '573123133192',
 
   instagram: '', // ej. 'elrinconcitodesalo' (déjalo vacío para ocultarlo)
   // Horario en que se responden los mensajes (se muestra en la bolsita y el pie de página).

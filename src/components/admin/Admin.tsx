@@ -211,6 +211,8 @@ function NoAdmin({ supabase, sesion }: { supabase: SupabaseClient; sesion: Sessi
   );
 }
 
+const FLUJO_PUBLICAR = 'https://github.com/mibernal/el-rinconcito-de-salo/actions/workflows/deploy.yml';
+
 function BotonPublicar({ supabase }: { supabase: SupabaseClient }) {
   const [estado, setEstado] = useState<'listo' | 'enviando' | 'ok' | 'error'>('listo');
   const [mensaje, setMensaje] = useState('');
@@ -220,7 +222,7 @@ function BotonPublicar({ supabase }: { supabase: SupabaseClient }) {
     const { data, error } = await supabase.functions.invoke('publicar', { method: 'POST' });
     if (error) {
       setEstado('error');
-      setMensaje('No se pudo publicar. Revisa que la función "publicar" esté instalada (ver README).');
+      setMensaje('El botón aún no está conectado. Los cambios salen solos en menos de una hora, o');
     } else {
       setEstado('ok');
       setMensaje(data?.mensaje ?? 'Publicando…');
@@ -228,10 +230,15 @@ function BotonPublicar({ supabase }: { supabase: SupabaseClient }) {
   };
 
   return (
-    <div class="flex items-center gap-3">
+    <div class="flex flex-wrap items-center justify-end gap-3">
       {mensaje && (
         <span class={`text-sm ${estado === 'error' ? 'text-fucsia-oscuro' : 'text-menta-fuerte'}`} role="status">
-          {mensaje}
+          {mensaje}{' '}
+          {estado === 'error' && (
+            <a href={FLUJO_PUBLICAR} target="_blank" rel="noopener" class="font-semibold underline">
+              Publicar desde GitHub
+            </a>
+          )}
         </span>
       )}
       <button type="button" onClick={publicar} disabled={estado === 'enviando'} class="btn btn-fucsia">
@@ -275,7 +282,7 @@ function Productos({ supabase }: { supabase: SupabaseClient }) {
     <div>
       <div class="flex flex-wrap items-center justify-between gap-3">
         <p class="text-tinta-suave">
-          {lista ? `${lista.length} productos` : 'Cargando…'} · Después de cambiar algo, toca <strong>Publicar cambios</strong>.
+          {lista ? `${lista.length} productos` : 'Cargando…'} · Los cambios aparecen en la página en menos de una hora, o al tocar <strong>Publicar cambios</strong>.
         </p>
         <button
           type="button"

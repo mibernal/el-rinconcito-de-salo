@@ -1,152 +1,162 @@
 # El Rinconcito de Salo 💖
 
-Catálogo web de maquillaje, mascarillas y cuidado facial. Los clientes arman su pedido en la **bolsita** y lo envían por **WhatsApp** con un mensaje ya listo (productos, cantidades, total, nombre y nota).
+Catálogo web de maquillaje, mascarillas y cuidado facial. Los clientes arman su pedido en la **bolsita** y lo envían por **WhatsApp** con un mensaje listo (productos, cantidades, total, nombre, nota y código de pedido).
 
-Hecho con [Astro](https://astro.build) + TypeScript + Tailwind CSS 4, con islas de Preact para la bolsita. Es un sitio estático: carga rápido, no necesita servidor y se publica gratis en GitHub Pages.
+- **Página:** https://mibernal.github.io/el-rinconcito-de-salo/
+- **Panel de administración:** https://mibernal.github.io/el-rinconcito-de-salo/admin/
+- **Base de datos:** Supabase, proyecto *Rinconcito de Salo* ([dashboard](https://supabase.com/dashboard/project/atadjqraehymwosjgxia))
+- **WhatsApp de pedidos:** +57 312 313 3192
+
+> 📘 **¿Vas a agregar o cambiar productos, fotos o precios?** Lee la [guía de productos](GUIA-PRODUCTOS.md).
+
+Hecho con [Astro](https://astro.build) 7 + TypeScript + Tailwind CSS 4, con islas de Preact para la bolsita y el panel. Es un sitio estático publicado en GitHub Pages; los productos salen de Supabase al construir el sitio.
 
 ---
 
-## Lo primero que hay que cambiar
+## Cómo funciona
 
-| Qué | Dónde |
-| --- | --- |
-| Número de WhatsApp que recibe los pedidos (`57` + número, solo dígitos) | `src/config.ts` → `whatsapp` (hoy `573228957446`) |
-| Horario de respuesta (opcional, se muestra en la bolsita y el pie) | `src/config.ts` → `horario` |
-| Nombre de la tienda, lema, formas de pago, entregas, Instagram | `src/config.ts` |
-| Productos, precios y fotos | `src/data/productos.yaml` + `public/productos/`, o el panel `/admin/` con Supabase |
-| Texto "¡Hola! Soy Salo" | `src/components/SobreMi.astro` |
-
-> Los 14 productos que vienen son **de ejemplo**, con ilustraciones. Reemplázalos por los reales.
-
-## Agregar o cambiar productos
-
-Hay dos formas. Mientras Supabase no esté conectado, se usa el archivo YAML; apenas se conecte, manda la base de datos y se edita desde el panel **/admin** (ver [Base de datos](#base-de-datos-supabase)).
-
-### Con el archivo (sin base de datos)
-
-1. Pon la foto en `public/productos/` (ideal: cuadrada, fondo claro o transparente, `.jpg`, `.png` o `.webp`, menos de 300 KB).
-2. Abre `src/data/productos.yaml`, copia un bloque completo y cambia los datos:
-
-```yaml
-- id: mascarilla-coco           # sin espacios ni tildes; se usa en el enlace
-  nombre: Mascarilla de coco
-  categoria: mascarillas        # mascarillas | cuidado-facial | labios | maquillaje | accesorios
-  precio: 6000                  # en pesos, sin puntos
-  precioAntes: 7000             # opcional, muestra el descuento
-  descripcion: Hidratante y con olor a coco.
-  detalles:
-    - Uso único, 20 minutos
-  imagen: mascarilla-coco.jpg
-  color: menta                  # fondo: rosa | menta | lavanda | durazno
-  etiqueta: nuevo               # opcional: nuevo | favorito | oferta
-  disponible: true              # false = se muestra como agotado
+```
+Panel /admin ──(supabase-js, sesión de admin)──► Supabase (productos, fotos, pedidos)
+                                                     │
+GitHub Actions (push, cada hora, botón Publicar) ────┘ lee productos al construir
+        │
+        ▼
+GitHub Pages (HTML estático) ──► cliente arma la bolsita ──► WhatsApp
+                                         └──(crear_pedido)──► Supabase guarda el pedido
 ```
 
-El orden del archivo es el orden en el catálogo (los agotados van al final). Si algo queda mal escrito, `npm run build` dice exactamente qué campo falla.
+- Si las variables de Supabase existen, el catálogo sale de la tabla `productos`. Si no, de `src/data/productos.yaml` (respaldo).
+- Los cambios hechos en el panel llegan a la página en la siguiente publicación: **cada hora de 7 a. m. a 10 p. m.**, con cada `push` a `main`, al correr el workflow a mano o con el botón *Publicar cambios* (si la función está instalada).
 
-## Trabajar en tu computador
+## Configuración
+
+### Variables de entorno
+
+| Variable | Valor | Dónde va |
+| --- | --- | --- |
+| `PUBLIC_SUPABASE_URL` | `https://atadjqraehymwosjgxia.supabase.co` | `.env` (local) y GitHub → *Variables* |
+| `PUBLIC_SUPABASE_KEY` | clave **publishable** `sb_publishable_…` | `.env` (local) y GitHub → *Variables* |
+
+- La clave *publishable* es pública por diseño (va dentro de la página). Lo que se puede hacer con ella lo limitan las reglas RLS. **Nunca** uses la clave *secret* / *service_role* en este proyecto.
+- En GitHub están en **Settings → Secrets and variables → Actions → Variables** (no en *Secrets*), y el workflow las pasa al build.
+- En local van en `.env` (copiado de `.env.example`). `.env` está en `.gitignore`: no se sube.
+
+### Trabajar en tu computador
 
 Necesitas Node.js 22.23 o más reciente (o Node 24).
 
 ```bash
-npm install
-npm run dev        # abre http://localhost:4321
-npm run build      # genera el sitio en dist/
-npm run check      # revisa tipos y errores
-```
-
-## Publicar en GitHub Pages
-
-El repositorio es [mibernal/el-rinconcito-de-salo](https://github.com/mibernal/el-rinconcito-de-salo) y el sitio queda en **https://mibernal.github.io/el-rinconcito-de-salo/**.
-
-Cada `push` a `main` publica el sitio solo (pestaña **Actions** para ver el progreso). El flujo está en `.github/workflows/deploy.yml` y Pages está configurado con **Source: GitHub Actions**.
-
-Para trabajar en tu computador:
-
-```bash
 git clone https://github.com/mibernal/el-rinconcito-de-salo.git
 cd el-rinconcito-de-salo
+cp .env.example .env      # y pega la URL y la clave publishable
 npm install
-npm run dev
+npm run dev               # http://localhost:4321  (el panel: http://localhost:4321/admin/)
 ```
 
-La ruta base se detecta sola, así que también funciona si luego le pones un dominio propio (Settings → Pages → Custom domain).
+Al arrancar, la consola dice de dónde salieron los productos: `14 productos desde Supabase` o `… desde src/data/productos.yaml`.
 
-## Base de datos (Supabase)
+```bash
+npm run check     # tipos y errores
+npm run build     # genera dist/ (igual que en GitHub)
+npm run preview   # sirve dist/ para probar la versión final
+```
 
-El sitio ya está preparado para Supabase. Al conectarlo:
+### Publicar (deploy)
 
-- Los productos se cargan desde la tabla `productos` (con fotos en Supabase Storage).
-- Cada pedido enviado por WhatsApp queda guardado con un código (ej. `SALO-7KQ4`) que también aparece en el mensaje.
-- El panel **https://mibernal.github.io/el-rinconcito-de-salo/admin/** permite agregar/editar productos con foto, manejar stock y cambiar el estado de los pedidos.
-- Al marcar un pedido como *Confirmado* se descuenta el stock; si se cancela, se devuelve. Con stock en 0 el producto sale como agotado.
+`.github/workflows/deploy.yml` construye y publica en GitHub Pages (*Settings → Pages → Source: GitHub Actions*). Se ejecuta:
 
-### Pasos para activarla (una sola vez)
+- con cada `push` a `main`;
+- cada hora de 7 a. m. a 10 p. m. (hora Colombia), para llevar a la página lo editado en el panel y mantener activo el proyecto gratuito de Supabase (se pausa tras 7 días sin uso);
+- a mano: [Actions → Publicar en GitHub Pages → Run workflow](https://github.com/mibernal/el-rinconcito-de-salo/actions/workflows/deploy.yml);
+- desde el botón *Publicar cambios* del panel (`repository_dispatch`), cuando la función `publicar` esté instalada.
 
-1. **Crear el proyecto:** en [supabase.com](https://supabase.com) → *New project*. Región sugerida: São Paulo (`sa-east-1`), la más cercana a Colombia.
-2. **Crear las tablas:** *SQL Editor* → pegar y ejecutar `supabase/migrations/20261028000000_tienda.sql`. Para cargar los 14 productos de ejemplo, ejecutar también `supabase/seed.sql`.
-3. **Crear el usuario administrador:** *Authentication → Users → Add user* (correo y contraseña, marcando *Auto confirm*). Entrar a `/admin/` con ese usuario: la página muestra la línea SQL exacta para darle permisos de administrador; ejecutarla en el *SQL Editor*.
-4. **Cerrar el registro público:** *Authentication → Sign In / Providers* → desactivar *Allow new users to sign up*.
-5. **Conectar el sitio:** en *Project Settings → API Keys* copiar la URL del proyecto y la clave **publishable** (o *anon*). En GitHub: *Settings → Secrets and variables → Actions → Variables* → crear `PUBLIC_SUPABASE_URL` y `PUBLIC_SUPABASE_KEY`. Luego *Actions → Publicar en GitHub Pages → Run workflow*.
-6. **Botón "Publicar cambios" del panel (opcional pero recomendado):**
-   - En GitHub crear un token *fine-grained* (*Settings → Developer settings → Personal access tokens*) solo para este repositorio con permiso **Contents: Read and write**.
-   - Instalar la función: `npx supabase login`, `npx supabase link --project-ref TU_REF`, `npx supabase functions deploy publicar`, `npx supabase secrets set GITHUB_TOKEN=el_token`.
-   - Sin este paso, los cambios del panel aparecen en la página con la publicación automática diaria o al correr el workflow a mano.
+La ruta base (`/el-rinconcito-de-salo/`) se detecta sola, así que también funciona con dominio propio.
 
-La clave publishable es pública por diseño: lo que se puede hacer con ella lo limitan las reglas RLS de la migración (el público solo lee productos visibles y crea pedidos con precios tomados de la base de datos; solo los administradores editan).
+## Supabase
 
-> El sitio se republica solo cada día a las 6:17 a. m. (hora Colombia): eso refresca stock y precios y evita que Supabase pause el proyecto gratuito por inactividad.
+Estado actual: **activo**. Migración y productos de ejemplo cargados, registro público cerrado y dos administradores (`elrinconcitodesalo@gmail.com` y `miguelangelbernal1991@gmail.com`).
 
-## Cómo está organizado
+- `supabase/migrations/20261028000000_tienda.sql`: tablas `productos`, `pedidos`, `pedido_items` y `admins`; bucket público `productos` para fotos; reglas RLS; función `crear_pedido` (toma precios de la base de datos y limita a 30 pedidos cada 10 minutos); trigger que descuenta stock al confirmar un pedido y lo devuelve al cancelarlo. Se puede volver a ejecutar sin romper nada.
+- `supabase/seed.sql`: los 14 productos de ejemplo.
+
+### Agregar otro administrador
+
+1. *Authentication → Users → Add user → Create new user* (correo + contraseña, con *Auto Confirm User*).
+2. *SQL Editor*:
+
+```sql
+insert into public.admins (user_id, nombre)
+select id, 'Nombre' from auth.users where email = 'correo@ejemplo.com';
+```
+
+### Cambiar la contraseña de un administrador
+
+*SQL Editor*:
+
+```sql
+update auth.users
+set encrypted_password = extensions.crypt('la-nueva-contraseña', extensions.gen_salt('bf'))
+where email = 'elrinconcitodesalo@gmail.com';
+```
+
+### Botón "Publicar cambios" (opcional)
+
+Sin esto todo funciona: los cambios salen en la publicación de cada hora. Para que el botón publique al instante:
+
+1. En GitHub crea un token *fine-grained* (*Settings → Developer settings → Personal access tokens → Fine-grained tokens*), solo para el repositorio `el-rinconcito-de-salo`, con permiso **Contents: Read and write**.
+2. Instala la función (desde la carpeta del proyecto):
+
+```bash
+npx supabase login
+npx supabase link --project-ref atadjqraehymwosjgxia
+npx supabase functions deploy publicar
+npx supabase secrets set GITHUB_TOKEN=el_token_de_github
+```
+
+## Estructura
 
 ```
 src/
-  config.ts                 ← datos de la tienda (WhatsApp, nombre, pagos…)
-  data/productos.yaml       ← catálogo cuando no hay base de datos
+  config.ts                 ← datos de la tienda (WhatsApp, horario, pagos, entregas…)
+  data/productos.yaml       ← catálogo de respaldo (solo si no hay Supabase)
   lib/cargar-productos.ts   ← lee productos de Supabase o del YAML
-  lib/pedidos.ts            ← registra pedidos en Supabase
-  lib/cart.ts               ← bolsita (nanostores, se guarda en el navegador)
-  lib/whatsapp.ts           ← arma los mensajes de WhatsApp
+  lib/supabase-config.ts    ← lee PUBLIC_SUPABASE_URL / PUBLIC_SUPABASE_KEY
+  lib/pedidos.ts            ← registra pedidos (crear_pedido)
+  lib/cart.ts               ← bolsita (nanostores; se valida y se sincroniza con el catálogo)
+  lib/whatsapp.ts           ← mensajes de WhatsApp
+  lib/categorias.ts         ← categorías
   components/               ← secciones de la página
   components/cart/          ← bolsita (Preact)
   components/admin/         ← panel de administración (Preact + supabase-js)
-  pages/index.astro         ← portada + catálogo
-  pages/producto/[id].astro ← una página por producto
-  pages/admin.astro         ← panel /admin
+  pages/                    ← portada, producto/[id], admin, 404, robots.txt
 supabase/
-  migrations/               ← tablas, reglas de seguridad, pedidos, stock, fotos
-  seed.sql                  ← productos de ejemplo
-  functions/publicar/       ← botón "Publicar cambios" del panel
+  migrations/  seed.sql  functions/publicar/
 public/
-  productos/                ← fotos de productos (modo archivo)
-  og.jpg                    ← imagen que aparece al compartir el enlace
+  productos/  og.jpg  favicon.svg  manifest.webmanifest  icono-*.png
 ```
 
 ## Seguridad
 
-- **Content Security Policy** en todas las páginas: solo se ejecutan scripts y estilos del propio sitio (con hash) y solo se conecta a Supabase.
-- **RLS en Supabase:** el público solo lee productos visibles y crea pedidos mediante `crear_pedido`, que toma los precios de la base de datos y limita a 30 pedidos cada 10 minutos.
-- **Bolsita validada:** lo guardado en el navegador se limpia y se corrige con el catálogo publicado (precios, agotados y productos retirados).
-- **Panel /admin:** `noindex`, excluido del sitemap y del `robots.txt`; solo usuarios de la tabla `admins` pueden escribir.
-- **Función publicar:** exige sesión de administrador y solo acepta llamadas desde `https://mibernal.github.io` (`ALLOWED_ORIGIN`).
-- **Dependabot** revisa dependencias npm (semanal) y acciones de GitHub (mensual).
-- **Recomendado en Supabase:** contraseña larga para el admin, activar *Leaked password protection* y desactivar el registro público.
+- **Content Security Policy** en todas las páginas: solo scripts y estilos propios (con hash) y conexiones a Supabase.
+- **RLS:** el público solo lee productos visibles y crea pedidos mediante `crear_pedido`; solo los usuarios de `admins` editan productos, fotos y pedidos.
+- **Bolsita validada:** lo guardado en el navegador se limpia y se corrige con el catálogo publicado.
+- **Panel:** `noindex`, fuera del sitemap y del `robots.txt`; registro público cerrado en Supabase.
+- **Función publicar:** exige sesión de admin y solo acepta llamadas desde `https://mibernal.github.io`.
+- **Dependabot:** revisa npm (semanal) y GitHub Actions (mensual).
+- **Recomendado:** contraseñas largas y distintas para cada admin, y activar *Leaked password protection* en *Authentication → Attack Protection*.
 
 ## Estado de la tienda virtual
 
 | Función | Estado |
 | --- | --- |
-| Catálogo con categorías, búsqueda y página por producto | ✅ |
-| Bolsita (carrito) que se guarda en el navegador | ✅ |
-| Pedido por WhatsApp con detalle, total, nombre y nota | ✅ |
-| Etiquetas nuevo / favorito / oferta con descuento, agotados | ✅ |
-| Imagen para compartir en WhatsApp/redes, SEO por producto, sitemap | ✅ |
-| Ordenar por precio, compartir producto, "avísame cuando llegue" | ✅ |
-| Se puede instalar en el celular (manifest e íconos) | ✅ |
-| Base de datos de productos con panel /admin y fotos | ✅ listo, falta activar Supabase |
-| Registro de pedidos con código y estados | ✅ listo, falta activar Supabase |
-| Inventario que se descuenta al confirmar pedidos | ✅ listo, falta activar Supabase |
-| Pago en línea (Wompi, Bold, Mercado Pago) | ⏳ requiere backend: Supabase Edge Function + webhook |
+| Catálogo con categorías, búsqueda, orden por precio y página por producto | ✅ |
+| Bolsita que se guarda en el navegador y se corrige si cambian precios | ✅ |
+| Pedido por WhatsApp con detalle, total, nombre, nota y código | ✅ |
+| Etiquetas nuevo / favorito / oferta, agotados y "avísame cuando llegue" | ✅ |
+| Compartir producto, imagen para redes, SEO, sitemap, instalable en el celular | ✅ |
+| Base de datos con panel /admin, fotos y stock | ✅ |
+| Registro de pedidos con estados e inventario automático | ✅ |
+| Botón "Publicar cambios" al instante | ⏳ falta instalar la función `publicar` (opcional) |
+| Pago en línea (Wompi, Bold, Mercado Pago) | ⏳ pendiente |
 | Costo de envío por zona | ⏳ pendiente |
-| Cuentas de cliente / historial de compras | ⏳ pendiente (Supabase Auth) |
 | Términos, política de datos (Ley 1581) y derecho de retracto | ⏳ pendiente, necesario antes de cobrar en línea |

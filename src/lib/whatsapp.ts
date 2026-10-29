@@ -30,8 +30,10 @@ export function mensajePedido(items: ItemBolsita[], cliente: DatosCliente, codig
 }
 
 /** Pregunta rápida por un producto desde su página. */
-export function mensajeProducto(nombre: string, precio: number): string {
-  return `¡Hola! 💖 Me interesa *${nombre}* (${formatoPrecio(precio)}) de ${tienda.nombre}. ¿Está disponible?`;
+export function mensajeProducto(nombre: string, precio: number, disponible = true): string {
+  return disponible
+    ? `¡Hola! 💖 Me interesa *${nombre}* (${formatoPrecio(precio)}) de ${tienda.nombre}. ¿Está disponible?`
+    : `¡Hola! 💖 Quiero que me avisen cuando vuelva a llegar *${nombre}* de ${tienda.nombre}.`;
 }
 
 export function mensajeSaludo(): string {

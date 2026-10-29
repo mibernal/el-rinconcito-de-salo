@@ -1,6 +1,7 @@
 import { useStore } from '@nanostores/preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import {
+  $avisoBolsita,
   $bolsita,
   $bolsitaAbierta,
   $cantidadTotal,
@@ -13,6 +14,7 @@ import {
   quitar,
   vaciar,
 } from '../../lib/cart';
+import { tienda } from '../../config';
 import { formatoPrecio, url } from '../../lib/utils';
 import { nuevoCodigoPedido, registrarPedido } from '../../lib/pedidos';
 import { enlaceWhatsApp, mensajePedido } from '../../lib/whatsapp';
@@ -27,26 +29,51 @@ export default function Bolsita() {
   const cantidad = useStore($cantidadTotal);
   const total = useStore($total);
   const cliente = useStore($cliente);
-  const [enviado, setEnviado] = useState(false);
+  const aviso = useStore($avisoBolsita);
+  const [enviado, setEnviado] = useState('');
+  const [confirmarVaciar, setConfirmarVaciar] = useState(false);
   const [codigo, setCodigo] = useState('');
   const cerrarRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const yaAbrio = useRef(false);
   const focoPrevio = useRef<HTMLElement | null>(null);
 
   // Abrir / cerrar: foco, scroll del fondo y tecla Escape
   useEffect(() => {
     const raiz = document.documentElement;
     if (abierta) {
+      yaAbrio.current = true;
       setCodigo(nuevoCodigoPedido());
       focoPrevio.current = document.activeElement as HTMLElement | null;
       raiz.style.overflow = 'hidden';
       requestAnimationFrame(() => cerrarRef.current?.focus());
-      const onKey = (e: KeyboardEvent) => e.key === 'Escape' && cerrarBolsita();
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') return cerrarBolsita();
+        // Mantener el foco del teclado dentro del panel
+        if (e.key !== 'Tab' || !panelRef.current) return;
+        const enfocables = panelRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        if (enfocables.length === 0) return;
+        const primero = enfocables[0];
+        const ultimo = enfocables[enfocables.length - 1];
+        if (e.shiftKey && document.activeElement === primero) {
+          e.preventDefault();
+          ultimo.focus();
+        } else if (!e.shiftKey && document.activeElement === ultimo) {
+          e.preventDefault();
+          primero.focus();
+        }
+      };
       window.addEventListener('keydown', onKey);
       return () => window.removeEventListener('keydown', onKey);
     }
     raiz.style.overflow = '';
+    if (!yaAbrio.current) return; // primera carga: no tocar el aviso de cambios
     focoPrevio.current?.focus?.();
-    setEnviado(false);
+    setEnviado('');
+    setConfirmarVaciar(false);
+    $avisoBolsita.set('');
   }, [abierta]);
 
   const enlace = enlaceWhatsApp(mensajePedido(items, cliente, codigo));
@@ -62,6 +89,7 @@ export default function Bolsita() {
       />
 
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="titulo-bolsita"
@@ -105,6 +133,14 @@ export default function Bolsita() {
           </div>
         ) : (
           <>
+            {aviso && (
+              <p class="mx-5 mt-4 flex items-start gap-2 rounded-2xl bg-durazno px-4 py-3 text-sm" role="status">
+                <span class="flex-1">{aviso}</span>
+                <button type="button" onClick={() => $avisoBolsita.set('')} class="font-semibold underline">
+                  Entendido
+                </button>
+              </p>
+            )}
             <ul class="flex-1 divide-y-2 divide-dashed divide-pincel overflow-y-auto px-5">
               {items.map((item) => (
                 <li key={item.id} class="flex gap-3 py-4">
@@ -140,7 +176,8 @@ export default function Bolsita() {
                         <button
                           type="button"
                           onClick={() => cambiarCantidad(item.id, item.cantidad + 1)}
-                          class="grid size-9 place-items-center rounded-full hover:bg-pincel"
+                          disabled={item.cantidad >= 20}
+                          class="grid size-9 place-items-center rounded-full hover:bg-pincel disabled:opacity-30"
                           aria-label={`Agregar una unidad de ${item.nombre}`}
                         >
                           <Icono nombre="mas" size={18} />
@@ -158,6 +195,7 @@ export default function Bolsita() {
                 <span class="mb-1 block text-sm font-medium">Tu nombre</span>
                 <input
                   type="text"
+                  maxLength={80}
                   autocomplete="name"
                   value={cliente.nombre}
                   onInput={(e) => $cliente.set({ ...cliente, nombre: e.currentTarget.value })}
@@ -169,6 +207,7 @@ export default function Bolsita() {
                 <span class="mb-1 block text-sm font-medium">Nota (opcional)</span>
                 <textarea
                   rows={2}
+                  maxLength={300}
                   value={cliente.nota}
                   onInput={(e) => $cliente.set({ ...cliente, nota: e.currentTarget.value })}
                   placeholder="Ej: barrio, hora de entrega o color que prefieres"
@@ -187,7 +226,7 @@ export default function Bolsita() {
                 rel="noopener"
                 onClick={() => {
                   registrarPedido(codigo, items, cliente);
-                  setEnviado(true);
+                  setEnviado(codigo);
                   setCodigo(nuevoCodigoPedido()); // si vuelve a enviar, es otro pedido
                 }}
                 class="btn btn-fucsia w-full text-lg"
@@ -198,21 +237,36 @@ export default function Bolsita() {
 
               {enviado ? (
                 <p class="rounded-2xl bg-menta px-4 py-3 text-sm" role="status">
-                  Se abrió WhatsApp con tu pedido. Cuando lo envíes, puedes{' '}
+                  Se abrió WhatsApp con tu pedido <strong>{enviado}</strong>. Cuando lo envíes, puedes{' '}
                   <button type="button" onClick={vaciar} class="font-semibold underline underline-offset-2">
                     vaciar la bolsita
                   </button>
                   .
                 </p>
+              ) : confirmarVaciar ? (
+                <p class="flex items-center justify-center gap-3 text-sm">
+                  ¿Vaciar la bolsita?
+                  <button type="button" onClick={vaciar} class="font-semibold text-fucsia-oscuro underline">
+                    Sí, vaciar
+                  </button>
+                  <button type="button" onClick={() => setConfirmarVaciar(false)} class="underline">
+                    No
+                  </button>
+                </p>
               ) : (
                 <button
                   type="button"
-                  onClick={vaciar}
+                  onClick={() => setConfirmarVaciar(true)}
                   class="mx-auto block text-sm text-tinta-suave underline underline-offset-2 hover:text-fucsia-oscuro"
                 >
                   Vaciar bolsita
                 </button>
               )}
+
+              <p class="text-center text-xs leading-relaxed text-tinta-suave">
+                {tienda.horario && <span class="block">{tienda.horario}</span>}
+                Tu nombre y tu nota solo se usan para preparar y entregar este pedido.
+              </p>
             </div>
           </>
         )}

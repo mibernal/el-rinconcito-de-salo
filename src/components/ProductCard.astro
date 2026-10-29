@@ -1,9 +1,10 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Etiqueta from './Etiqueta.astro';
+import FotoProducto from './FotoProducto.astro';
 import BotonAgregar from './BotonAgregar.astro';
 import { CATEGORIAS } from '../content.config';
-import { formatoPrecio, imagenProducto, normalizar, url } from '../lib/utils';
+import { formatoPrecio, normalizar, url } from '../lib/utils';
 
 interface Props {
   producto: CollectionEntry<'productos'>;
@@ -14,24 +15,27 @@ const enlace = url(`producto/${id}/`);
 const textoBusqueda = normalizar(`${data.nombre} ${data.descripcion} ${CATEGORIAS[data.categoria]}`);
 ---
 
-<li class="group flex flex-col" data-producto data-categoria={data.categoria} data-buscar={textoBusqueda}>
+<li
+  class="group flex flex-col"
+  data-producto
+  data-categoria={data.categoria}
+  data-buscar={textoBusqueda}
+  data-precio={data.precio}
+  data-disponible={data.disponible ? '1' : '0'}
+>
   <a
     href={enlace}
     tabindex="-1"
     aria-hidden="true"
     class:list={[`tile-${data.color}`, 'relative block aspect-square overflow-hidden rounded-tile']}
   >
-    <img
-      src={imagenProducto(data.imagen)}
-      alt=""
-      width="240"
-      height="240"
-      loading="lazy"
-      decoding="async"
-      class:list={[
+    <FotoProducto
+      imagen={data.imagen}
+      ancho={240}
+      class={[
         'size-full object-contain p-[6%] transition-transform duration-300 ease-out group-hover:-rotate-3 group-hover:scale-105',
         !data.disponible && 'opacity-50 grayscale-[40%]',
-      ]}
+      ].filter(Boolean).join(' ')}
     />
     {data.etiqueta && <Etiqueta tipo={data.etiqueta} precio={data.precio} precioAntes={data.precioAntes} />}
   </a>

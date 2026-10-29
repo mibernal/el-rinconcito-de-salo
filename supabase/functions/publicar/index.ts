@@ -4,10 +4,15 @@
 // Secretos necesarios (Supabase → Edge Functions → Secrets):
 //   GITHUB_TOKEN  token fine-grained del repo con permiso "Contents: Read and write"
 //   GITHUB_REPO   opcional, por defecto "mibernal/el-rinconcito-de-salo"
+//   ALLOWED_ORIGIN opcional, por defecto "https://mibernal.github.io" (cámbialo si usas dominio propio)
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 
+// Solo la página de la tienda puede llamar esta función desde el navegador
+const ORIGEN = Deno.env.get('ALLOWED_ORIGIN') ?? 'https://mibernal.github.io';
+
 const cors = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': ORIGEN,
+  Vary: 'Origin',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };

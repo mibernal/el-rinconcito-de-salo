@@ -1,0 +1,43 @@
+---
+import { getImage } from 'astro:assets';
+import { imagenProducto } from '../lib/utils';
+
+interface Props {
+  imagen: string;
+  alt?: string;
+  /** Ancho en pantalla (px); se genera también la versión 2x para pantallas retina */
+  ancho: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const { imagen, alt = '', ancho, class: className, loading = 'lazy' } = Astro.props;
+
+let src = imagenProducto(imagen);
+let srcset: string | undefined;
+
+// Fotos subidas al panel (Supabase Storage): se reducen y pasan a WebP al construir el sitio
+if (/^https:\/\/[a-z0-9-]+\.supabase\.co\//i.test(imagen)) {
+  try {
+    const [x1, x2] = await Promise.all([
+      getImage({ src: imagen, inferSize: true, width: ancho, format: 'webp' }),
+      getImage({ src: imagen, inferSize: true, width: ancho * 2, format: 'webp' }),
+    ]);
+    src = x1.src;
+    srcset = `${x1.src} 1x, ${x2.src} 2x`;
+  } catch {
+    /* si no se puede optimizar, se usa la foto original */
+  }
+}
+---
+
+<img
+  src={src}
+  srcset={srcset}
+  alt={alt}
+  width={ancho}
+  height={ancho}
+  loading={loading}
+  decoding="async"
+  class={className}
+/>

@@ -65,9 +65,22 @@ const filtros = [
     }
   </div>
 
-  <p class="sr-only" aria-live="polite" data-conteo></p>
+  <div class="mt-4 flex items-center justify-between gap-3 text-sm text-tinta-suave">
+    <p aria-live="polite" data-conteo>{productos.length} productos</p>
+    <label class="flex items-center gap-2">
+      <span>Ordenar</span>
+      <select
+        data-orden
+        class="rounded-full border-2 border-pincel bg-white py-1.5 pl-3 pr-8 font-medium text-tinta outline-none focus:border-fucsia"
+      >
+        <option value="">Recomendados</option>
+        <option value="menor">Menor precio</option>
+        <option value="mayor">Mayor precio</option>
+      </select>
+    </label>
+  </div>
 
-  <ul class="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4" role="list">
+  <ul data-lista class="mt-5 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4" role="list">
     {productos.map((producto) => <ProductCard producto={producto} />)}
   </ul>
 
@@ -95,11 +108,28 @@ const filtros = [
     const vacio = raiz.querySelector<HTMLElement>('[data-vacio]')!;
     const vacioTexto = raiz.querySelector<HTMLElement>('[data-vacio-texto]')!;
     const conteo = raiz.querySelector<HTMLElement>('[data-conteo]')!;
+    const lista = raiz.querySelector<HTMLElement>('[data-lista]')!;
+    const selectorOrden = raiz.querySelector<HTMLSelectElement>('[data-orden]')!;
+    const ordenOriginal = [...items];
     const validas = new Set(chips.map((c) => c.dataset.filtro));
 
     const params = new URLSearchParams(location.search);
     let categoria = validas.has(params.get('categoria') ?? '') ? params.get('categoria')! : 'todo';
     buscador.value = params.get('q') ?? '';
+    const ordenUrl = params.get('orden') ?? '';
+    selectorOrden.value = ['menor', 'mayor'].includes(ordenUrl) ? ordenUrl : '';
+
+    const ordenar = () => {
+      const modo = selectorOrden.value;
+      const precio = (el: HTMLElement) => Number(el.dataset.precio);
+      const disp = (el: HTMLElement) => Number(el.dataset.disponible);
+      const orden = modo
+        ? [...ordenOriginal].sort(
+            (a, b) => disp(b) - disp(a) || (modo === 'menor' ? precio(a) - precio(b) : precio(b) - precio(a)),
+          )
+        : ordenOriginal;
+      lista.append(...orden);
+    };
 
     const aplicar = () => {
       const q = normalizar(buscador.value);
@@ -123,6 +153,7 @@ const filtros = [
       const url = new URL(location.href);
       categoria === 'todo' ? url.searchParams.delete('categoria') : url.searchParams.set('categoria', categoria);
       q ? url.searchParams.set('q', buscador.value.trim()) : url.searchParams.delete('q');
+      selectorOrden.value ? url.searchParams.set('orden', selectorOrden.value) : url.searchParams.delete('orden');
       history.replaceState(null, '', url);
     };
 
@@ -133,6 +164,10 @@ const filtros = [
       });
     }
     buscador.addEventListener('input', aplicar);
+    selectorOrden.addEventListener('change', () => {
+      ordenar();
+      aplicar();
+    });
     raiz.querySelector('[data-limpiar]')?.addEventListener('click', () => {
       categoria = 'todo';
       buscador.value = '';
@@ -140,6 +175,7 @@ const filtros = [
       buscador.focus();
     });
 
-    if (categoria !== 'todo' || buscador.value) aplicar();
+    if (selectorOrden.value) ordenar();
+    if (categoria !== 'todo' || buscador.value || selectorOrden.value) aplicar();
   }
 </script>

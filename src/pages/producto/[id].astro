@@ -4,6 +4,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
 import Etiqueta from '../../components/Etiqueta.astro';
+import FotoProducto from '../../components/FotoProducto.astro';
 import BotonAgregar from '../../components/BotonAgregar.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { CATEGORIAS } from '../../content.config';
@@ -51,7 +52,7 @@ const jsonLd = {
 ---
 
 <Layout titulo={data.nombre} descripcion={data.descripcion}>
-  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <div class="mx-auto max-w-6xl px-4 pb-20 pt-6 sm:px-6 sm:pt-10">
     <nav aria-label="Ruta" class="text-sm">
@@ -72,13 +73,13 @@ const jsonLd = {
     </nav>
 
     <article class="mt-4 grid gap-8 md:grid-cols-2 md:gap-12 lg:gap-16">
-      <div class:list={[`tile-${data.color}`, 'relative aspect-square overflow-hidden rounded-[2.25rem]']}>
-        <img
-          src={imagenProducto(data.imagen)}
+      <div class:list={[`tile-${data.color}`, 'relative aspect-[4/3] overflow-hidden rounded-[2.25rem] md:aspect-square']}>
+        <FotoProducto
+          imagen={data.imagen}
           alt={data.nombre}
-          width="480"
-          height="480"
-          class:list={['size-full object-contain p-[8%]', !data.disponible && 'opacity-50 grayscale-[40%]']}
+          ancho={560}
+          loading="eager"
+          class={`size-full object-contain p-[8%] ${data.disponible ? '' : 'opacity-50 grayscale-[40%]'}`}
         />
         {
           data.etiqueta && (
@@ -152,15 +153,26 @@ const jsonLd = {
           </div>
         </div>
 
-        <a
-          href={enlaceWhatsApp(mensajeProducto(data.nombre, data.precio))}
-          target="_blank"
-          rel="noopener"
-          class="mt-4 inline-flex items-center gap-2 self-start rounded-full py-2 font-medium text-tinta underline decoration-pincel decoration-2 underline-offset-4 hover:decoration-fucsia"
-        >
-          <Icon nombre="chat" />
-          {data.disponible ? 'Preguntar por este producto' : 'Avísame cuando vuelva a llegar'}
-        </a>
+        <div class="mt-4 flex flex-wrap gap-x-6 gap-y-1">
+          <a
+            href={enlaceWhatsApp(mensajeProducto(data.nombre, data.precio, data.disponible))}
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-2 rounded-full py-2 font-medium text-tinta underline decoration-pincel decoration-2 underline-offset-4 hover:decoration-fucsia"
+          >
+            <Icon nombre="chat" />
+            {data.disponible ? 'Preguntar por este producto' : 'Avísame cuando vuelva a llegar'}
+          </a>
+          <button
+            type="button"
+            data-compartir
+            data-titulo={data.nombre}
+            class="inline-flex items-center gap-2 rounded-full py-2 font-medium text-tinta underline decoration-pincel decoration-2 underline-offset-4 hover:decoration-fucsia"
+          >
+            <Icon nombre="compartir" />
+            <span data-texto>Compartir</span>
+          </button>
+        </div>
       </div>
     </article>
 
@@ -178,6 +190,26 @@ const jsonLd = {
 </Layout>
 
 <script>
+  // Compartir el producto (menú nativo del celular o copiar el enlace)
+  const compartir = document.querySelector<HTMLButtonElement>('[data-compartir]');
+  compartir?.addEventListener('click', async () => {
+    const datos = { title: compartir.dataset.titulo ?? document.title, url: location.href.split('?')[0] };
+    const texto = compartir.querySelector<HTMLElement>('[data-texto]');
+    try {
+      if (navigator.share) {
+        await navigator.share(datos);
+        return;
+      }
+      await navigator.clipboard.writeText(datos.url);
+      if (texto) {
+        texto.textContent = '¡Enlace copiado!';
+        setTimeout(() => (texto.textContent = 'Compartir'), 1800);
+      }
+    } catch {
+      /* el usuario canceló */
+    }
+  });
+
   const stepper = document.querySelector<HTMLElement>('[data-stepper]');
   const campo = document.querySelector<HTMLInputElement>('#cantidad');
   if (stepper && campo) {

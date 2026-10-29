@@ -5,7 +5,12 @@ import { Icono } from './Icono';
 
 /** Botón de la bolsita en el encabezado, con el número de productos. */
 export default function BotonBolsita() {
-  const cantidad = useStore($cantidadTotal);
+  // Primero se pinta igual que el HTML del servidor (0) y luego la cantidad guardada,
+  // para que la hidratación no mezcle estados.
+  const cantidadGuardada = useStore($cantidadTotal);
+  const [montado, setMontado] = useState(false);
+  useEffect(() => setMontado(true), []);
+  const cantidad = montado ? cantidadGuardada : 0;
   const ultimo = useStore($ultimoAgregado);
   const [rebote, setRebote] = useState(false);
 

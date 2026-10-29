@@ -10,9 +10,10 @@ Hecho con [Astro](https://astro.build) + TypeScript + Tailwind CSS 4, con islas 
 
 | Qué | Dónde |
 | --- | --- |
-| Número de WhatsApp que recibe los pedidos (`57` + número, solo dígitos) | `src/config.ts` → `whatsapp` |
+| Número de WhatsApp que recibe los pedidos (`57` + número, solo dígitos) | `src/config.ts` → `whatsapp` (hoy `573228957446`) |
+| Horario de respuesta (opcional, se muestra en la bolsita y el pie) | `src/config.ts` → `horario` |
 | Nombre de la tienda, lema, formas de pago, entregas, Instagram | `src/config.ts` |
-| Productos, precios y fotos | `src/data/productos.yaml` + `public/productos/` |
+| Productos, precios y fotos | `src/data/productos.yaml` + `public/productos/`, o el panel `/admin/` con Supabase |
 | Texto "¡Hola! Soy Salo" | `src/components/SobreMi.astro` |
 
 > Los 14 productos que vienen son **de ejemplo**, con ilustraciones. Reemplázalos por los reales.
@@ -121,6 +122,16 @@ public/
   og.jpg                    ← imagen que aparece al compartir el enlace
 ```
 
+## Seguridad
+
+- **Content Security Policy** en todas las páginas: solo se ejecutan scripts y estilos del propio sitio (con hash) y solo se conecta a Supabase.
+- **RLS en Supabase:** el público solo lee productos visibles y crea pedidos mediante `crear_pedido`, que toma los precios de la base de datos y limita a 30 pedidos cada 10 minutos.
+- **Bolsita validada:** lo guardado en el navegador se limpia y se corrige con el catálogo publicado (precios, agotados y productos retirados).
+- **Panel /admin:** `noindex`, excluido del sitemap y del `robots.txt`; solo usuarios de la tabla `admins` pueden escribir.
+- **Función publicar:** exige sesión de administrador y solo acepta llamadas desde `https://mibernal.github.io` (`ALLOWED_ORIGIN`).
+- **Dependabot** revisa dependencias npm (semanal) y acciones de GitHub (mensual).
+- **Recomendado en Supabase:** contraseña larga para el admin, activar *Leaked password protection* y desactivar el registro público.
+
 ## Estado de la tienda virtual
 
 | Función | Estado |
@@ -129,7 +140,9 @@ public/
 | Bolsita (carrito) que se guarda en el navegador | ✅ |
 | Pedido por WhatsApp con detalle, total, nombre y nota | ✅ |
 | Etiquetas nuevo / favorito / oferta con descuento, agotados | ✅ |
-| Imagen para compartir en WhatsApp/redes, SEO por producto | ✅ |
+| Imagen para compartir en WhatsApp/redes, SEO por producto, sitemap | ✅ |
+| Ordenar por precio, compartir producto, "avísame cuando llegue" | ✅ |
+| Se puede instalar en el celular (manifest e íconos) | ✅ |
 | Base de datos de productos con panel /admin y fotos | ✅ listo, falta activar Supabase |
 | Registro de pedidos con código y estados | ✅ listo, falta activar Supabase |
 | Inventario que se descuenta al confirmar pedidos | ✅ listo, falta activar Supabase |

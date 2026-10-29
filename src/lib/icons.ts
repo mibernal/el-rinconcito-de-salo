@@ -11,6 +11,8 @@ export const ICONOS = {
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
   camara: '<path d="M4 8.5h3.2L9 6h6l1.8 2.5H20V19H4z"/><circle cx="12" cy="13.2" r="3.3"/>',
   atras: '<path d="M15 6l-6 6 6 6"/>',
+  compartir:
+    '<circle cx="17.5" cy="6" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><circle cx="17.5" cy="18" r="2.5"/><path d="m8.7 10.8 6.6-3.6M8.7 13.2l6.6 3.6"/>',
   corazon:
     '<path d="M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.4 4.2 4.2 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10Z" fill="currentColor" stroke="none"/>',
 } as const;

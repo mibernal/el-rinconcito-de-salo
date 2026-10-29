@@ -169,6 +169,11 @@ begin
     raise exception 'Demasiados productos en un pedido';
   end if;
 
+  -- Freno contra abuso: máximo 30 pedidos nuevos por cada 10 minutos en toda la tienda
+  if (select count(*) from public.pedidos where creado_en > now() - interval '10 minutes') >= 30 then
+    raise exception 'Demasiados pedidos seguidos, intenta en unos minutos';
+  end if;
+
   insert into public.pedidos (codigo, cliente_nombre, nota, total)
   values (
     upper(p_codigo),
